@@ -30,12 +30,16 @@ jobs:
       
       # install kubectl
       - uses: azure/setup-kubectl@v1
-
+      - name: install moustache
+        run: |
+          curl -sSL https://git.io/get-mo -o mo
+          chmod +x mo
+          sudo mv mo /usr/local/bin/
+          echo "works" | mo
       # Kubectl configuration
       - name: Kubectl configuration
         shell: bash
         run: |
-          echo ${{ secrets.NILE }}
           mkdir  ~/.kube
           echo ${{ secrets.KUBE_CONFIG }} | base64 -d -i > ~/.kube/config
           kubectl version
