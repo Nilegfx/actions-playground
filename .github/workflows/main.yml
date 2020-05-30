@@ -27,3 +27,17 @@ jobs:
           registry: docker.m3ntorship.com
           repository: actions-playground
           tags: latest
+      
+      # install kubectl
+      - uses: azure/setup-kubectl@v1
+
+      # Kubectl configuration
+      - name: Kubectl configuration
+        shell: bash
+        run: |
+          mkdir  ~/.kube
+          echo ${{ secrets.KUBECONFIG }} | base64 -d -i > ~/.kube/config
+          kubectl version
+          kubectl cluster-info
+          kubectl get nodes
+          kubectl get pods
