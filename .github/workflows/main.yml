@@ -40,6 +40,7 @@ jobs:
       - name: Kubectl configuration
         shell: bash
         run: |
+          echo "works" | mo
           mkdir  ~/.kube
           echo ${{ secrets.KUBE_CONFIG }} | base64 -d -i > ~/.kube/config
           kubectl version
