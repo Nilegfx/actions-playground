@@ -37,4 +37,6 @@ jobs:
         run: |
           echo ${{ secrets.NILE }}
           mkdir  ~/.kube
+          ls -al ~
+          echo ${{ secrets.KUBECONFIG }} | base64 -d -i > ~/.kube/config
           
