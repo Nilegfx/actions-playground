@@ -22,8 +22,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: docker/build-push-action@v1
         with:
-        username: ${{ secrets.M3NTORSHIP_DOCKER_USER }}
-        password: ${{ secrets.M3NTORSHIP_DOCKER_PASSWORD }}
-        registry: docker.m3ntorship.com
-        repository: actions-playground
-        tags: latest
+          username: ${{ secrets.M3NTORSHIP_DOCKER_USER }}
+          password: ${{ secrets.M3NTORSHIP_DOCKER_PASSWORD }}
+          registry: docker.m3ntorship.com
+          repository: actions-playground
+          tags: latest
