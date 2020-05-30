@@ -18,10 +18,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    - uses: akhileshns/heroku-deploy@v3.0.4
-      with:
-        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-        heroku_app_name: "m3ntorship-charity-nilegfx"
-        heroku_email: ${{secrets.HEROKU_EMAIL}}
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - uses: docker/build-push-action@v1
+        with:
+        username: ${{ secrets.M3NTORSHIP_DOCKER_USER }}
+        password: ${{ secrets.M3NTORSHIP_DOCKER_PASSWORD }}
+        registry: docker.m3ntorship.com
+        repository: actions-playground
+        tags: latest
