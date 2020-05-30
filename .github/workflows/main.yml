@@ -37,6 +37,8 @@ jobs:
         run: |
           echo ${{ secrets.NILE }}
           mkdir  ~/.kube
-          ls -al ~
-          echo ${{ secrets.KUBECONFIG }} | base64 -d -i > ~/.kube/config
-          
+          echo ${{ secrets.KUBE_CONFIG }} | base64 -d -i > ~/.kube/config
+          kubectl version
+          kubectl cluster-info
+          kubectl get nodes
+          kubectl get pods
