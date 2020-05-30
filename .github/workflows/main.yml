@@ -35,9 +35,6 @@ jobs:
       - name: Kubectl configuration
         shell: bash
         run: |
+          echo ${{ secrets.NILE }}
           mkdir  ~/.kube
-          echo ${{ secrets.KUBECONFIG }} | base64 -d -i > ~/.kube/config
-          kubectl version
-          kubectl cluster-info
-          kubectl get nodes
-          kubectl get pods
+          
