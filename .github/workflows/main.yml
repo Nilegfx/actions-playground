@@ -50,4 +50,4 @@ jobs:
           kubectl cluster-info
           kubectl get nodes
           kubectl get pods
-          kubectl apply ./deploy/resources
+          kubectl apply -f ./deploy/resources
