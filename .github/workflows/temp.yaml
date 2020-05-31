@@ -23,5 +23,5 @@ jobs:
       
       - name: m3ntorship deploy
         uses: m3ntorship/deploy-action@0.0.2
-          with:
-            who-to-greet: 'kareem'
+        with:
+          who-to-greet: 'kareem'
