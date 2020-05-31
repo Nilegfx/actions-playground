@@ -36,11 +36,14 @@ jobs:
           chmod +x mo
           sudo mv mo /usr/local/bin/
           echo "works" | mo
+      - name: generate k8s resources from templates
+        run: |
+          mkdir -p ./deploy/resources
+          for f in ./deploy/apply/*.yaml; do mo -s=delivery "$f" > ./deploy/resources/"$(basename $f)"; done
       # Kubectl configuration
       - name: Kubectl configuration
         shell: bash
         run: |
-          mkdir -p ./apply/resources && for f in ./deploy/apply/*.yaml; do mo -s=delivery "$f" > ./deploy/resources/"$(basename $f)"; done
           mkdir -p ~/.kube
           echo ${{ secrets.KUBE_CONFIG }} | base64 -d -i > ~/.kube/config
           kubectl version
