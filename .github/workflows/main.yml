@@ -40,10 +40,11 @@ jobs:
       - name: Kubectl configuration
         shell: bash
         run: |
-          echo "works" | mo
-          mkdir  ~/.kube
+          mkdir -p ./apply/resources && for f in ./deploy/apply/*.yaml; do mo -s=delivery "$f" > ./deploy/resources/"$(basename $f)"; done
+          mkdir -p ~/.kube
           echo ${{ secrets.KUBE_CONFIG }} | base64 -d -i > ~/.kube/config
           kubectl version
           kubectl cluster-info
           kubectl get nodes
           kubectl get pods
+          kubectl apply ./deploy/resources

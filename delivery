@@ -1,0 +1,2 @@
+APPLICATION=koko
+SECRET_NAME=basic-auth

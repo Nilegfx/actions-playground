@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{{APPLICATION}}}"
+  labels:
+    app: "{{{APPLICATION}}}"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "{{{APPLICATION}}}"
+  template:
+    metadata:
+      labels:
+        app: "{{{APPLICATION}}}"
+    spec:    
+      containers:
+        - name: "{{{APPLICATION}}}"
+          image: nilegfx/nile:8
+          ports:
+            - name: web
+              containerPort: 3002
+              protocol: TCP
+
+          volumeMounts:
+            - name: basic-auth-volume
+              mountPath: "/auth"
+              readOnly: true
+      volumes:
+      - name: basic-auth-volume
+        secret:
+          secretName: "{{{SECRET_NAME}}}"
