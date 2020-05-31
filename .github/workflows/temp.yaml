@@ -20,6 +20,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - uses: m3ntorship/deploy-actions/0.0.1
+      - uses: m3ntorship/deploy-actions@0.0.1
         with:
           who-to-greet: 'kareem'
