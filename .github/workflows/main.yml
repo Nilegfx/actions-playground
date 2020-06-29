@@ -24,7 +24,7 @@ jobs:
         with:
           username: ${{ secrets.M3NTORSHIP_DOCKER_USER }}
           password: ${{ secrets.M3NTORSHIP_DOCKER_PASSWORD }}
-          registry: docker.m3ntorship.com
+          registry: docker.m3ntorship.net
           repository: actions-playground
           tags: latest
       
