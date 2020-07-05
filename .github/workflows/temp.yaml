@@ -15,7 +15,7 @@ jobs:
   temp:
     env:
       AHMED: true
-      M3NTORSHIP_VERSION: ${GITHUB_SHA::8}
+      M3NTORSHIP_VERSION: ${GITHUB_SHA:7}
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
