@@ -15,6 +15,7 @@ jobs:
   temp:
     env:
       AHMED: true
+      M3NTORSHIP_VERSION: ${GITHUB_SHA::8}
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -23,7 +24,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - name: show envs
-        run: env
+        run: |
+          env
+          echo $(git rev-parse --short "$GITHUB_SHA")
+          echo $M3NTORSHIP_VERSION
       - name: m3ntorship deploy
         uses: m3ntorship/deploy-action@0.0.2
         with:
