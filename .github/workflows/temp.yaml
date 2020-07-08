@@ -9,13 +9,13 @@ on:
     branches:
       - master
 
+env:
+  AHMED: true
+  M3NTORSHIP_NAME: 'AYOUB'
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
   temp:
-    env:
-      AHMED: true
-      M3NTORSHIP_VERSION: ${GITHUB_SHA:7}
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -23,12 +23,22 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      - name: get shortsha
+        id: vars
+        run: |
+         echo ::set-env name=M3NTORSHIP_VERSION::$(git rev-parse --short=4 ${{ github.sha }})
       - name: show envs
         run: |
           env
           echo $(git rev-parse --short "$GITHUB_SHA")
           echo $M3NTORSHIP_VERSION
-      - name: m3ntorship deploy
-        uses: m3ntorship/deploy-action@0.0.2
-        with:
-          who-to-greet: 'kareem'
+          echo $M3NTORSHIP_NAME
+      - name: another action
+        run: echo $M3NTORSHIP_VERSION
+      - name: install moustache
+        run: |
+          curl -sSL https://git.io/get-mo -o mo
+          chmod +x mo
+          sudo mv mo /usr/local/bin/
+          echo "works" | mo
+          echo 'hello {{{M3NTORSHIP_VERSION}}} and {{{M3NTORSHIP_NAME}}}' | mo
