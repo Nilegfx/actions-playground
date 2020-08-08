@@ -21,6 +21,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: cat $GITHUB_EVENT_PATH
-      - run: echo ${github.event.number}-${github.event.pull_request.commits}-${needs.prepare.outputs.version}
+      - run: echo ${{github.event.number}}-${{github.event.pull_request.commits}}-${{needs.prepare.outputs.version}}
 
       
