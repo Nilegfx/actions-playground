@@ -6,8 +6,8 @@ name: temp
 # events but only for the master branch
 on: 
   push:
-    branches:
-      - master
+    branches-ignore:
+      - '**'
 
 env:
   AHMED: true
