@@ -30,7 +30,8 @@ jobs:
           echo ::set-output name=parent_pr_head::$(echo $PR_HEAD)
           echo ::set-output name=parent_pr_number::$(echo ${{steps.get_pr.outputs.parent_pr}} | jq -r '.number')
           echo ::set-output name=parent_pr_commit_count::$(echo ${{steps.get_pr.outputs.parent_pr}} | jq -r '.commits')
-          echo ::set-output name=parent_pr_version::$(git rev-parse --short=4 $PR_HEAD)
+          mkdir temp && cd temp && git init && TEMP_VERSION=$(git rev-parse --short=4 $PR_HEAD) && cd .. && rm -rf temp
+          echo ::set-output name=parent_pr_version::$TEMP_VERSION
 
   # prepare:
   #   needs: init
