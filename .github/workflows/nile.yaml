@@ -4,7 +4,18 @@ on:
   pull_request:
     types: [assigned, opened, synchronize, reopened, closed]
 jobs:
+  init:
+    runs-on: ubuntu-latest
+    outputs:
+      shouldrun: steps.check.outputs.triggered
+    steps:
+      - uses: khan/pull-request-comment-trigger@master
+        id: check
+        with:
+          trigger: '@m3ntorship/deploy'
   prepare:
+    needs: init
+    if: needs.init.outputs.shouldrun == 'true'
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -16,11 +27,12 @@ jobs:
         run: |
           echo ::set-output name=version::$(git rev-parse --short=4 ${{ github.sha }})
   nile_job:
-    needs: prepare
+    needs: [init, prepare]
+    if: needs.init.outputs.shouldrun == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: cat $GITHUB_EVENT_PATH
-      - run: echo ${{github.event.number}}-${{github.event.pull_request.commits}}-${{needs.prepare.outputs.version}}
+      - run: echo ${{github.event.number}}-${{github.event.pull_request.commits}}-$M3_VERSION
 
       
