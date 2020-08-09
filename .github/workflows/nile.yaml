@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [assigned, opened, synchronize, reopened, closed]
   issue_comment:
-    types: [created]
+    types: [created,edited]
 jobs:
   init:
     runs-on: ubuntu-latest
