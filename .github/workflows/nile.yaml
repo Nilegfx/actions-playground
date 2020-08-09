@@ -10,29 +10,29 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       shouldrun: ${{steps.check.outputs.triggered}}
-      parent_pr: ${{steps.get_pr.outputs.parent_pr}}
+      parent_pr: ${{steps.get_pr_values.outputs.parent_pr}}
       parent_pr_head: ${{steps.get_pr_values.outputs.parent_pr_head}}
-      parent_pr_number: ${{steps.get_pr.outputs.parent_pr_number}}
-      parent_pr_commit_count: ${{steps.get_pr_values.outputs.parent_pr_commit_count}}
+      parent_pr_number: ${{steps.get_pr_values.outputs.parent_pr_number}}
+      parent_pr_commits_count: ${{steps.get_pr_values.outputs.parent_pr_commits_count}}
       parent_pr_version: ${{steps.get_pr_values.outputs.parent_pr_version}}
     steps:
       - uses: khan/pull-request-comment-trigger@master
         id: check
         with:
           trigger: '@m3ntorship/deploy'
-      - id: get_pr
+      - id: get_pr_values
         if: steps.check.outputs.triggered == 'true'
         run: |
-          echo ::set-output name=parent_pr::$(curl ${{ github.event.issue.pull_request.url }})
-      - id: get_pr_values
-        run: |
-          PR_HEAD=$(echo '${{steps.get_pr.outputs.parent_pr}}' | jq -r '.head.sha')
-          echo ::set-output name=parent_pr_head::$(echo $PR_HEAD)
-          echo ::set-output name=parent_pr_number::$(echo ${{steps.get_pr.outputs.parent_pr}} | jq -r '.number')
-          echo ::set-output name=parent_pr_commit_count::$(echo ${{steps.get_pr.outputs.parent_pr}} | jq -r '.commits')
-          mkdir temp && cd temp && git init && TEMP_VERSION=$(git rev-parse --short=4 $PR_HEAD) && cd .. && rm -rf temp
-          echo ::set-output name=parent_pr_version::$TEMP_VERSION
-
+          TEMP_PR=$(curl ${{ github.event.issue.pull_request.url }})
+          TEMP_PR_HEAD=$(echo $PR | jq -r '.head.sha')
+          TEMP_PR_NUMBER=$(echo $PR | jq -r '.number')
+          TEMP_PR_COMMITS_COUNT=$(echo $PR | jq -r '.commits')
+          mkdir temp && cd temp && git init && TEMP_VERSION=$(git rev-parse --short=4 $TEMP_PR_HEAD) && cd .. && rm -rf temp
+          echo ::set-output name=parent_pr::$(echo $TEMP_PR)
+          echo ::set-output name=parent_pr_head::$(echo $TEMP_PR_HEAD)
+          echo ::set-output name=parent_pr_number::$(echo $TEMP_PR_NUMBER)
+          echo ::set-output name=parent_pr_commits_count::$(echo $TEMP_PR_COMMITS_COUNT)
+          echo ::set-output name=parent_pr_version::$(echo $TEMP_VERSION)
   # prepare:
   #   needs: init
   #   if: needs.init.outputs.shouldrun == 'true'
@@ -55,4 +55,4 @@ jobs:
         with:
           ref: ${{needs.init.outputs.parent_pr_head}}
       - run: cat $GITHUB_EVENT_PATH
-      - run: echo ${{needs.init.outputs.parent_pr_number}}-${{needs.init.outputs.parent_pr_commit_count}}-${{needs.init.outputs.parent_pr_version}}      
+      - run: echo ${{needs.init.outputs.parent_pr_number}}-${{needs.init.outputs.parent_pr_commits_count}}-${{needs.init.outputs.parent_pr_version}}      
