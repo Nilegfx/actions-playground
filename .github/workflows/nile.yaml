@@ -26,7 +26,7 @@ jobs:
           echo ::set-output name=parent_pr::$(curl ${{ github.event.issue.pull_request.url }})
       - id: get_pr_values
         run: |
-          PR_HEAD=$(echo ${{steps.get_pr.outputs.parent_pr}} | jq -r '.head.sha')
+          PR_HEAD=$(echo '${{steps.get_pr.outputs.parent_pr}}' | jq -r '.head.sha')
           echo ::set-output name=parent_pr_head::$(echo $PR_HEAD)
           echo ::set-output name=parent_pr_number::$(echo ${{steps.get_pr.outputs.parent_pr}} | jq -r '.number')
           echo ::set-output name=parent_pr_commit_count::$(echo ${{steps.get_pr.outputs.parent_pr}} | jq -r '.commits')
