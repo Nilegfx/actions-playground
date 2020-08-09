@@ -10,33 +10,48 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       shouldrun: ${{steps.check.outputs.triggered}}
+      parent_pr: ${{steps.get_pr.outputs.parent_pr}}
+      parent_pr_head: ${{steps.get_pr_values.outputs.parent_pr_head}}
+      parent_pr_number: ${{steps.get_pr.outputs.parent_pr_number}}
+      parent_pr_commit_count: ${{steps.get_pr_values.outputs.parent_pr_commit_count}}
+      parent_pr_version: ${{steps.get_pr_values.outputs.parent_pr_version}}
     steps:
       - uses: khan/pull-request-comment-trigger@master
         id: check
         with:
           trigger: '@m3ntorship/deploy'
-      - run: 'echo Found it!'
+      - id: get_pr
         if: steps.check.outputs.triggered == 'true'
-  prepare:
-    needs: init
-    if: needs.init.outputs.shouldrun == 'true'
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v1
-      # dynamic deployment envs
-      - name: set templating envs
-        id: version
         run: |
-          echo ::set-output name=version::$(git rev-parse --short=4 ${{ github.sha }})
+          echo ::set-output name=parent_pr::$(curl ${{ github.event.issue.pull_request.url }})
+      - id: get_pr_values
+        run: |
+          PR_HEAD=$(echo ${{steps.get_pr.outputs.parent_pr}} | jq -r '.head.sha')
+          echo ::set-output name=parent_pr_head::$(echo $PR_HEAD)
+          echo ::set-output name=parent_pr_number::$(echo ${{steps.get_pr.outputs.parent_pr}} | jq -r '.number')
+          echo ::set-output name=parent_pr_commit_count::$(echo ${{steps.get_pr.outputs.parent_pr}} | jq -r '.commits')
+          echo ::set-output name=parent_pr_version::$(git rev-parse --short=4 $PR_HEAD)
+
+  # prepare:
+  #   needs: init
+  #   if: needs.init.outputs.shouldrun == 'true'
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     version: ${{ steps.version.outputs.version }}
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     # dynamic deployment envs
+  #     - name: set templating envs
+  #       id: version
+  #       run: |
+  #         echo ::set-output name=version::$(git rev-parse --short=4 ${{ github.sha }})
   nile_job:
-    needs: [init, prepare]
+    needs: [init]
     if: needs.init.outputs.shouldrun == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{needs.init.outputs.parent_pr_head}}
       - run: cat $GITHUB_EVENT_PATH
-      - run: echo ${{github.event.number}}-${{github.event.pull_request.commits}}-$M3_VERSION
-
-      
+      - run: echo ${{needs.init.outputs.parent_pr_number}}-${{needs.init.outputs.parent_pr_commit_count}}-${{needs.init.outputs.parent_pr_version}}      
