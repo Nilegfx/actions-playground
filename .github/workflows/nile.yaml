@@ -9,12 +9,14 @@ jobs:
   init:
     runs-on: ubuntu-latest
     outputs:
-      shouldrun: steps.check.outputs.triggered
+      shouldrun: ${{steps.check.outputs.triggered}}
     steps:
       - uses: khan/pull-request-comment-trigger@master
         id: check
         with:
           trigger: '@m3ntorship/deploy'
+      - run: 'echo Found it!'
+        if: steps.check.outputs.triggered == 'true'
   prepare:
     needs: init
     if: needs.init.outputs.shouldrun == 'true'
