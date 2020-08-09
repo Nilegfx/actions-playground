@@ -33,6 +33,10 @@ jobs:
           echo ::set-output name=parent_pr_number::$(echo $TEMP_PR_NUMBER)
           echo ::set-output name=parent_pr_commits_count::$(echo $TEMP_PR_COMMITS_COUNT)
           echo ::set-output name=parent_pr_version::$(echo $TEMP_VERSION)
+          echo "TEMP_PR_HEAD=$TEMP_PR_HEAD"
+          echo "TEMP_PR_NUMBER=$TEMP_PR_NUMBER"
+          echo "TEMP_PR_COMMITS_COUNT=$TEMP_PR_COMMITS_COUNT"
+          echo "TEMP_VERSION=$TEMP_VERSION"
   # prepare:
   #   needs: init
   #   if: needs.init.outputs.shouldrun == 'true'
@@ -47,7 +51,7 @@ jobs:
   #       run: |
   #         echo ::set-output name=version::$(git rev-parse --short=4 ${{ github.sha }})
   nile_job:
-    needs: [init]
+    needs: init
     if: needs.init.outputs.shouldrun == 'true'
     runs-on: ubuntu-latest
     steps:
