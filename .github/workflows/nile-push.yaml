@@ -9,10 +9,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: yarn
+      - run: yarn --cwd .github/custom_actions/delete_old_docker_tags
       - name: Hello world action step
-        uses: ./ # Uses an action in the root directory
-        id: hello
+        uses: ./.github/custom_actions/delete_old_docker_tags # Uses an action in the root directory
+        id: delete_old_tags
         env:
           DOCKER_HUB_TOKEN: ${{secrets.DOCKER_HUB_TOKEN}}
         with:

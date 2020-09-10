@@ -9,9 +9,6 @@
     "start": "serve build"
   },
   "dependencies": {
-    "@actions/core": "^1.2.4",
-    "@actions/github": "^4.0.0",
-    "axios": "^0.20.0",
     "serve": "^11.3.0"
   }
 }
