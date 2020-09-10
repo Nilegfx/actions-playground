@@ -1,33 +1,7 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
 const axios = require("axios");
-/**
- {
-  "creator": 10527647,
-  "id": 116370396,
-  "image_id": null,
-  "images": [
-    {
-      "architecture": "amd64",
-      "features": "",
-      "variant": null,
-      "digest": "sha256:a6b6e3b02efb5e0ba3be56c58affe087fcb19b98061bce23858dc247471c18ad",
-      "os": "linux",
-      "os_features": "",
-      "os_version": null,
-      "size": 161073072
-    }
-  ],
-  "last_updated": "2020-09-07T16:22:57.28556Z",
-  "last_updater": 10527647,
-  "last_updater_username": "m3ntorshipci",
-  "name": "9976",
-  "repository": 9641846,
-  "full_size": 161073072,
-  "v2": true
-}
- * 
- */
+
 const dockerhubAPI = axios.create({
   baseURL: "https://hub.docker.com/v2",
   headers: {
@@ -45,10 +19,14 @@ const getAllCurrentTags = (user, repo) => {
 };
 
 const deleteSingleTag = (user, repo, tag) => {
+  console.log(`🟡 deleting ${tag} tag from ${user}/${repo}`)
   return dockerhubAPI({
     method: "DELETE",
     url: `/repositories/${user}/${repo}/tags/${tag}/`,
-  });
+  }).then((response) => {
+    console.log(`✅ successfully deleted ${tag} from ${user}/${repo}`)
+    return response
+  })
 };
 
 const getOldTags = (numbersToKeep, tags) => {
@@ -81,7 +59,7 @@ const run = async () => {
 
     // get old tags
     const oldTags = getOldTags(numberOfTagsToKeep, results);
-
+    console.log(`about to delete ${oldTags.length} which are ${JSON.stringify(oldTags)}`);
     // create tag deletion promises
     const tagDeletionPromises = oldTags.map((tag) => {
       return deleteSingleTag(dockerhubUser, dockerhubRepo, tag);
