@@ -16,7 +16,7 @@ jobs:
         env:
           DOCKER_HUB_TOKEN: ${{secrets.DOCKER_HUB_TOKEN}}
         with:
-          keep-last: 5
+          keep-last: 4
           user: 'm3ntorshipci'
           repo: 'm3ntorshipcom-frontend'
 
