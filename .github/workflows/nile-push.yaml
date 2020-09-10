@@ -13,6 +13,8 @@ jobs:
       - name: Hello world action step
         uses: ./ # Uses an action in the root directory
         id: hello
+        env:
+          DOCKER_HUB_TOKEN: ${{secrets.DOCKER_HUB_TOKEN}}
         with:
           keep-last: 5
           user: 'm3ntorshipci'
