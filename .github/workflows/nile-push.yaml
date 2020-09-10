@@ -2,7 +2,7 @@ name: ahmed
 on:
   push:
     branches:
-      - master
+      - delete-docker-tags
 jobs:
   start:
     runs-on: ubuntu-latest
