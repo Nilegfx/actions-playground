@@ -1,13 +1,21 @@
 name: 'Hello World'
 description: 'Greet someone and record the time'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  keep-last:  # id of input
+    description: 'how many tags to keep'
     required: true
-    default: 'World'
+    default: 5
+  user: 
+    description: 'dockerhub user'
+    required: true
+    default: 5
+  repo:
+    description: 'dockerhub repository to delete the tags from'
+    required: true
+    default: 5
 outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+  success: # id of output
+    description: 'status of the deletion'
 runs:
   using: 'node12'
   main: 'index.js'
