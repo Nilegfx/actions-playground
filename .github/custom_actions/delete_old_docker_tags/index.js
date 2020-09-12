@@ -1,19 +1,19 @@
-const core = require('@actions/core');
-const axios = require('axios');
+const core = require("@actions/core");
+const axios = require("axios");
 
 const dockerhubAPI = axios.create({
-  baseURL: 'https://hub.docker.com/v2',
+  baseURL: "https://hub.docker.com/v2",
   headers: {
-    Authorization: `JWT ${process.env.DOCKER_HUB_TOKEN}`
-  }
+    Authorization: `JWT ${process.env.DOCKER_HUB_TOKEN}`,
+  },
 });
 
 const getAllCurrentTags = (user, repo) => {
   return dockerhubAPI({
     url: `/repositories/${user}/${repo}/tags/`,
     params: {
-      page_size: 5000
-    }
+      page_size: 5000,
+    },
   });
 };
 
@@ -24,22 +24,22 @@ const shouldDeleteTag = (index, numbersToKeep, tag, substrings) => {
   if (!substrings) {
     return true;
   }
-  return substrings.some(substring => {
+  return substrings.some((substring) => {
     if (!substring) {
       core.warning(
-        'You sent an empty substring, The empty substring has been ignored because this may have unexpected deletions, if you want to delete all old tags ommit this option'
+        "You sent an empty substring, The empty substring has been ignored because this may have unexpected deletions, if you want to delete all old tags ommit this option"
       );
     }
-    return substring && tag.includes(substring);
+    return substring && tag.name.includes(substring);
   });
 };
 
 const deleteSingleTag = (user, repo, tag) => {
   core.warning(`🟡 deleting ${tag} tag from ${user}/${repo}`);
   return dockerhubAPI({
-    method: 'DELETE',
-    url: `/repositories/${user}/${repo}/tags/${tag}/`
-  }).then(response => {
+    method: "DELETE",
+    url: `/repositories/${user}/${repo}/tags/${tag}/`,
+  }).then((response) => {
     core.info(`✅ successfully deleted ${tag} from ${user}/${repo}`);
     return response;
   });
@@ -61,7 +61,7 @@ const cleanUpSingleRepo = async (
 ) => {
   // get all current tags
   const {
-    data: { results }
+    data: { results },
   } = await getAllCurrentTags(dockerhubUser, dockerhubRepo);
 
   // get old tags
@@ -70,7 +70,7 @@ const cleanUpSingleRepo = async (
     `about to delete ${oldTags.length} which are ${JSON.stringify(oldTags)}`
   );
   // create tag deletion promises
-  const tagDeletionPromises = oldTags.map(tag => {
+  const tagDeletionPromises = oldTags.map((tag) => {
     return deleteSingleTag(dockerhubUser, dockerhubRepo, tag);
   });
 
@@ -81,8 +81,8 @@ const cleanUpSingleRepo = async (
 const run = async () => {
   try {
     // inputs
-    let numberOfTagsToKeep = parseInt(core.getInput('keep-last'));
-    const forceFullCleanup = core.getInput('force-full-cleanup');
+    let numberOfTagsToKeep = parseInt(core.getInput("keep-last"));
+    const forceFullCleanup = core.getInput("force-full-cleanup");
 
     if (isNaN(numberOfTagsToKeep)) {
       throw 'Please be sure to set input "keep-last" as a number';
@@ -92,18 +92,20 @@ const run = async () => {
       throw 'To delete all Images please set input "force-full-cleanup" equals to true';
     }
 
-    const dockerhubUser = core.getInput('user');
-    const dockerhubReposStr = core.getInput('repos');
+    const dockerhubUser = core.getInput("user");
+    const dockerhubReposStr = core.getInput("repos");
     const dockerhubRepos = JSON.parse(dockerhubReposStr);
-    const substrings = JSON.parse(core.getInput('substrings'));
+    const substringsStr = core.getInput("substrings");
+    const substrings = substringsStr ? JSON.parse(substringsStr) : false;
 
-    core.startGroup('Inputs');
+    core.startGroup("Inputs");
     core.info(`keep-last ${numberOfTagsToKeep}`);
     core.info(`user ${dockerhubUser}`);
-    core.info(`repo ${dockerhubRepos}`);
+    core.info(`repos ${dockerhubRepos}`);
+    core.info(`substrings ${substrings}`);
     core.endGroup();
 
-    const reposCleanupPromises = dockerhubRepos.map(repo => {
+    const reposCleanupPromises = dockerhubRepos.map((repo) => {
       return cleanUpSingleRepo(
         numberOfTagsToKeep,
         dockerhubUser,
@@ -115,13 +117,15 @@ const run = async () => {
     //wait for all repos cleanup
     await Promise.all(reposCleanupPromises);
 
-    core.setOutput('success', true);
+    core.setOutput("success", true);
   } catch (error) {
     core.setFailed(error);
   }
 };
 
-// process.env['INPUT_USER'] = 'm3ntorship';
-// process.env['INPUT_REPOS'] = '["m3ntorshipcom-storybook"]';
-// process.env['INPUT_KEEP-LAST'] = 90;
+// process.env["INPUT_USER"] = "m3ntorship";
+// process.env["INPUT_REPOS"] = '["m3ntorshipcom-storybook"]';
+// process.env["INPUT_KEEP-LAST"] = 75;
+// process.env["INPUT_SUBSTRINGS"] = '["pr"]';
+
 run();
