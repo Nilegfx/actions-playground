@@ -18,4 +18,4 @@ jobs:
         with:
           keep-last: 50
           user: "m3ntorship"
-          repo: '["m3ntorshipcom-storybook"]'
+          repos: '["m3ntorshipcom-storybook"]'
