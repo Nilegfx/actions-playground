@@ -9,7 +9,7 @@
     "start": "serve build"
   },
   "dependencies": {
-    "@actions/core": "^1.2.4",
+    "@actions/core": "^1.9.1",
     "@actions/github": "^4.0.0",
     "serve": "^11.3.0"
   }
